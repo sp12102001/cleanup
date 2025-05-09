@@ -1,0 +1,94 @@
+############################################################
+# CleanUp Example Configuration File
+# Save this as ~/.config/cleanup/config.yaml or specify with -c
+############################################################
+
+# Organization rules in order of precedence
+rules:
+  # Default rule: organize by file extension
+  - type: extension
+    description: Default extension-based categorization
+
+  # Pattern-based rules
+  - type: pattern
+    patterns:
+      # Documentation files
+      "README*": documentation
+      "*.md": documentation
+      "docs/*": documentation
+      "manual*.pdf": documentation
+
+      # Source code
+      "*.py": python_code
+      "*.js": javascript_code
+      "*.html": web_files
+      "*.css": web_files
+
+      # Data files
+      "data_*.csv": data_files
+      "*.json": data_files
+      "*.xml": data_files
+
+      # Media files with specific patterns
+      "screenshot_*": screenshots
+      "profile_*.jpg": profile_pictures
+      "wallpaper_*": wallpapers
+
+  # Size-based rules
+  - type: size
+    size_ranges:
+      - min: 0
+        max: 102400 # 100KB
+        folder: tiny_files
+      - min: 102400
+        max: 1048576 # 1MB
+        folder: small_files
+      - min: 1048576
+        max: 104857600 # 100MB
+        folder: medium_files
+      - min: 104857600
+        max: 1073741824 # 1GB
+        folder: large_files
+      - min: 1073741824
+        folder: huge_files
+
+  # Date-based rules (using file modification time)
+  - type: date
+    date_ranges:
+      - start: "2020-01-01"
+        end: "2020-12-31"
+        folder: 2020_files
+      - start: "2021-01-01"
+        end: "2021-12-31"
+        folder: 2021_files
+      - start: "2022-01-01"
+        end: "2022-12-31"
+        folder: 2022_files
+      - start: "2023-01-01"
+        end: "2023-12-31"
+        folder: 2023_files
+      # Last 30 days
+      - start: "LAST_30_DAYS"
+        folder: recent_files
+
+# Global settings
+quarantine: true # Move to temp location first for safety
+recursive: false # Don't process subdirectories by default
+threads: 4 # Use 4 worker threads for faster processing
+
+# File patterns to include (only these will be processed)
+include_patterns:
+  - "*.txt"
+  - "*.pdf"
+  - "*.jpg"
+  - "*.png"
+  - "*.docx"
+  - "*.xlsx"
+
+# File patterns to exclude (these will be skipped)
+exclude_patterns:
+  - "*.tmp"
+  - "~*"
+  - ".git*"
+  - ".DS_Store"
+  - "Thumbs.db"

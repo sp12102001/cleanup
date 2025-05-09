@@ -36,7 +36,7 @@ import fnmatch
 from datetime import datetime
 
 from docopt import docopt
-from huepy import *
+from huepy import bold, lightblue, yellow, lightgreen, lightred
 import yaml
 import colorama
 from tqdm import tqdm

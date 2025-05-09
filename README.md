@@ -6,13 +6,50 @@
 
 A powerful command line utility that organises files in a directory into subdirectories based on customizable rules, including file extensions, patterns, sizes, and dates.
 
+## Features
+
+- **Customizable Organization Rules** - Sort files by extension, pattern, size, date, and more
+- **Interactive Mode** - Approve or reject each move operation individually
+- **Safe Operations** - Quarantine mode to prevent accidental data loss
+- **Detailed Logging** - Comprehensive logs of all operations
+- **Multiple Revert Points** - Revert to any previous cleanup operation
+- **Advanced Filtering** - Include/exclude files based on patterns
+- **Recursive Processing** - Organize files in subdirectories
+- **Multi-threading** - Speed up processing of large directories
+- **Cross-Platform** - Works on Windows, macOS, and Linux
+
 ## Usage
 
 ![Usage](https://i.imgur.com/iATfu3Y.png)
 
-When run without any option, it organises the files in the specified directory into subdirectories based on the files' extensions.
+When run without any options, CleanUp organizes the files in the specified directory into subdirectories based on the files' extensions.
 
-### Options
+### Basic Examples
+
+```bash
+# Basic cleanup of a directory
+cleanup ~/Downloads
+
+# Preview what would happen (dry run)
+cleanup -d ~/Documents
+
+# Interactively approve each move operation
+cleanup -i ~/Pictures
+
+# Process a directory and all its subdirectories
+cleanup --recursive ~/Music
+
+# Only organize PDF and image files
+cleanup -p "*.pdf,*.jpg,*.png" ~/Documents
+
+# Exclude executable files
+cleanup -x "*.exe,*.dll,*.sh" ~/Downloads
+
+# Use 4 threads for faster processing
+cleanup --threads 4 ~/Videos
+```
+
+### Command-Line Options
 
 * #### `-d`, `--dry-run`
 
@@ -113,21 +150,27 @@ When run without any option, it organises the files in the specified directory i
   cleanup -h
   ```
 
-## Configuration
+## Configuration File
 
-You can customize CleanUp behavior using a configuration file (YAML or JSON). Here's an example:
+You can customize CleanUp behavior using a configuration file (YAML or JSON). This allows for powerful organization rules beyond simple file extensions.
+
+### Configuration Example
 
 ```yaml
 rules:
+  # Default rule: organize by file extension
   - type: extension
     description: Default extension-based categorization
 
+  # Pattern-based rules
   - type: pattern
     patterns:
       "*.txt": text
       "*.log": logs
       "backup*": backups
+      "report*.pdf": reports
 
+  # Size-based rules
   - type: size
     size_ranges:
       - min: 0
@@ -139,6 +182,7 @@ rules:
       - min: 104857600
         folder: large_files
 
+  # Date-based rules (using file modification time)
   - type: date
     date_ranges:
       - start: "2020-01-01"
@@ -147,7 +191,11 @@ rules:
       - start: "2021-01-01"
         end: "2021-12-31"
         folder: 2021_files
+      - start: "2022-01-01"
+        end: "2022-12-31"
+        folder: 2022_files
 
+# Global settings
 quarantine: false
 recursive: false
 threads: 4
@@ -158,6 +206,50 @@ include_patterns:
 exclude_patterns:
   - "*.tmp"
   - "~*"
+```
+
+### Rule Precedence
+
+When multiple rules could apply to a file, the rules are evaluated in the following order:
+1. Pattern-based rules
+2. Size-based rules
+3. Date-based rules
+4. Extension-based rules (default fallback)
+
+## Advanced Usage Examples
+
+### Creating a Log Report
+
+```bash
+# Run cleanup with logging enabled
+cleanup -l cleanup.log ~/Downloads
+
+# The log file contains detailed information about all operations
+cat cleanup.log
+```
+
+### Using Quarantine Mode for Safety
+
+```bash
+# First move files to a temporary location before final destination
+cleanup -q ~/Important_Files
+```
+
+### Multi-threaded Processing for Large Directories
+
+```bash
+# Use 8 threads for faster processing of large directories
+cleanup --threads 8 ~/Videos
+```
+
+### Managing Multiple Revert Points
+
+```bash
+# When reverting without a timestamp, it shows available revert points
+cleanup -r ~/Documents
+
+# Reverting to a specific cleanup operation
+cleanup -r 20230524135721 ~/Documents
 ```
 
 ## Development
